@@ -1,0 +1,109 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// --- 1. IDENTITY & ACCESS MANAGEMENT ---
+
+model User {
+  id            String       @id @default(cuid())
+  email         String       @unique
+  name          String?
+  image         String?      // Profile picture URL
+  memberships   Member[]     // Which organizations do I belong to?
+  assignedIssues Issue[]     @relation("Assignee")
+  createdIssues  Issue[]     @relation("Creator")
+  createdAt     DateTime     @default(now())
+}
+
+model Organization {
+  id            String    @id @default(cuid())
+  name          String
+  slug          String    @unique
+  domain        String?   @unique
+  
+  members       Member[]
+  projects      Project[]
+  issues        Issue[]
+  createdAt     DateTime  @default(now())
+}
+
+model Member {
+  id             String       @id @default(cuid())
+  role           Role         @default(MEMBER)
+  
+  // Relations
+  userId         String
+  user           User         @relation(fields: [userId], references: [id])
+  orgId          String
+  organization   Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, orgId]) // A user cannot be in the same org twice
+}
+
+enum Role {
+  ADMIN   // Can delete projects, invite members
+  MEMBER  // Can create/edit issues
+  VIEWER  // Read-only access
+}
+
+// --- 2. WORK MANAGEMENT ---
+
+model Project {
+  id            String       @id @default(cuid())
+  name          String
+  key           String       // e.g., "WEB" for issues like WEB-101
+  description   String?
+  
+  // Multi-tenancy
+  orgId         String
+  organization  Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  
+  issues        Issue[]
+  createdAt     DateTime     @default(now())
+
+  @@unique([orgId, key])    // Projects in the SAME org cannot have the same Key
+}
+
+model Issue {
+  id            String       @id @default(cuid())
+  title         String
+  description   String?      @db.Text
+  status        Status       @default(BACKLOG)
+  priority      Priority     @default(MEDIUM)
+  order         Float        // For Drag-and-Drop sorting (e.g., 1000.0, 2000.0)
+
+  // Relations
+  projectId     String
+  project       Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  
+  orgId         String       // Added for faster queries (denormalization)
+  organization  Organization @relation(fields: [orgId], references: [id])
+
+  assigneeId    String?
+  assignee      User?        @relation("Assignee", fields: [assigneeId], references: [id])
+  
+  creatorId     String
+  creator       User         @relation("Creator", fields: [creatorId], references: [id])
+
+  updatedAt     DateTime     @updatedAt
+  createdAt     DateTime     @default(now())
+}
+
+enum Status {
+  BACKLOG
+  TODO
+  IN_PROGRESS
+  DONE
+  CANCELED
+}
+
+enum Priority {
+  URGENT
+  HIGH
+  MEDIUM
+  LOW
+}

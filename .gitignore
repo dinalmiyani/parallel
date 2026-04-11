@@ -12,8 +12,6 @@
 **/.env.test.local
 **/.env.production.local
 
-# --- Database ---
-**/prisma/migrations/
 # (Keep migrations in git, but ignore sqlite db if you ever use it)
 *.db
 *.db-journal
