@@ -9,21 +9,22 @@ datasource db {
 // --- 1. IDENTITY & ACCESS MANAGEMENT ---
 
 model User {
-  id            String       @id @default(cuid())
+  id            String       @id // Manual Clerk User ID (user_...)
   email         String       @unique
   name          String?
-  image         String?      // Profile picture URL
-  memberships   Member[]     // Which organizations do I belong to?
+  image         String?
+  memberships   Member[]     
   assignedIssues Issue[]     @relation("Assignee")
   createdIssues  Issue[]     @relation("Creator")
   createdAt     DateTime     @default(now())
 }
 
 model Organization {
-  id            String    @id @default(cuid())
+  id            String    @id // Manual Clerk Org ID (org_...)
   name          String
   slug          String    @unique
   domain        String?   @unique
+  isPersonal    Boolean   @default(false)
   
   members       Member[]
   projects      Project[]
@@ -35,13 +36,12 @@ model Member {
   id             String       @id @default(cuid())
   role           Role         @default(MEMBER)
   
-  // Relations
   userId         String
-  user           User         @relation(fields: [userId], references: [id])
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   orgId          String
   organization   Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, orgId]) // A user cannot be in the same org twice
+  @@unique([userId, orgId])
 }
 
 enum Role {
