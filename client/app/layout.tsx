@@ -2,12 +2,12 @@
 
 import {
   ClerkProvider,
-  SignInButton,
   UserButton,
   OrganizationSwitcher,
   useAuth
 } from '@clerk/nextjs';
 import './globals.css';
+import Link from 'next/link';
 
 function HeaderContent() {
   const { userId, isLoaded } = useAuth();
@@ -17,7 +17,7 @@ function HeaderContent() {
   return (
     <header className="flex items-center justify-between border-b bg-white px-6 py-3 shadow-sm">
       <div className="flex items-center gap-4">
-        <h1 className="text-xl font-bold text-indigo-600">IssueTracker</h1>
+        <h1 className="text-xl font-bold text-indigo-600">Parallel</h1>
 
         {userId && (
           <div className="border-l pl-4">
@@ -28,11 +28,11 @@ function HeaderContent() {
 
       <div>
         {!userId ? (
-          <SignInButton mode="modal">
+          <Link href='/sign-in'>
             <button className="rounded-md bg-indigo-600 px-4 py-2 text-sm text-white">
               Sign In
             </button>
-          </SignInButton>
+          </Link>
         ) : (
           <UserButton />
         )}

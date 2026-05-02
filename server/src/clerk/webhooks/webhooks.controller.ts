@@ -119,6 +119,17 @@ export class WebhooksController {
         }
         break;
 
+      case 'user.deleted':
+        try {
+          await this.prisma.user.update({
+            where: { id: data.id },
+            data: { name: 'Deleted User', email: `deleted-${data.id}` },
+          });
+        } catch (e) {
+          console.log(e, 'error')
+        }
+        break;
+
       case 'organization.deleted':
         await this.prisma.organization.delete({
           where: { id: data.id },
