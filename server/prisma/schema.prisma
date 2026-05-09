@@ -9,101 +9,140 @@ datasource db {
 // --- 1. IDENTITY & ACCESS MANAGEMENT ---
 
 model User {
-  id            String       @id // Manual Clerk User ID (user_...)
-  email         String       @unique
-  name          String?
-  image         String?
-  memberships   Member[]     
-  assignedIssues Issue[]     @relation("Assignee")
-  createdIssues  Issue[]     @relation("Creator")
-  createdAt     DateTime     @default(now())
+  id        String   @id // Clerk User ID (user_...)
+  email     String   @unique
+  name      String?
+  image     String?
+  members   Member[]
+  createdAt DateTime @default(now())
 }
 
 model Organization {
-  id            String    @id // Manual Clerk Org ID (org_...)
-  name          String
-  slug          String    @unique
-  domain        String?   @unique
-  isPersonal    Boolean   @default(false)
-  
-  members       Member[]
-  projects      Project[]
-  issues        Issue[]
-  createdAt     DateTime  @default(now())
+  id         String   @id // Clerk Org ID (org_...)
+  name       String
+  slug       String   @unique
+  domain     String?  @unique
+  isPersonal Boolean  @default(false)
+  logo       String?
+  brandColor String   @default("#2563EB")
+
+  members     Member[]
+  projects    Project[]
+  subscribers Subscriber[]
+  createdAt   DateTime     @default(now())
 }
 
 model Member {
-  id             String       @id @default(cuid())
-  role           Role         @default(MEMBER)
-  
-  userId         String
-  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  orgId          String
-  organization   Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  id   String @id @default(cuid())
+  role Role   @default(MEMBER)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  orgId        String
+  organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
 
   @@unique([userId, orgId])
 }
 
 enum Role {
-  ADMIN   // Can delete projects, invite members
-  MEMBER  // Can create/edit issues
-  VIEWER  // Read-only access
+  ADMIN
+  MEMBER
+  VIEWER
 }
 
-// --- 2. WORK MANAGEMENT ---
+// --- 2. GITHUB INTEGRATION ---
 
 model Project {
-  id            String       @id @default(cuid())
+  id            String @id @default(cuid())
   name          String
-  key           String       // e.g., "WEB" for issues like WEB-101
-  description   String?
-  
-  // Multi-tenancy
-  orgId         String
-  organization  Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
-  
-  issues        Issue[]
-  createdAt     DateTime     @default(now())
+  repoName      String
+  repoOwner     String
+  githubRepoId  Int    @unique
+  defaultBranch String @default("main")
 
-  @@unique([orgId, key])    // Projects in the SAME org cannot have the same Key
+  orgId        String
+  organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+
+  pullRequests GithubPR[]
+  entries      ChangelogEntry[]
+
+  createdAt DateTime @default(now())
 }
 
-model Issue {
-  id            String       @id @default(cuid())
-  title         String
-  description   String?      @db.Text
-  status        Status       @default(BACKLOG)
-  priority      Priority     @default(MEDIUM)
-  order         Float        // For Drag-and-Drop sorting (e.g., 1000.0, 2000.0)
+model GithubPR {
+  id       String   @id @default(cuid())
+  prNumber Int
+  title    String
+  body     String?  @db.Text
+  author   String
+  mergedAt DateTime
+  used     Boolean  @default(false)
 
-  // Relations
-  projectId     String
-  project       Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  
-  orgId         String       // Added for faster queries (denormalization)
-  organization  Organization @relation(fields: [orgId], references: [id])
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
-  assigneeId    String?
-  assignee      User?        @relation("Assignee", fields: [assigneeId], references: [id])
-  
-  creatorId     String
-  creator       User         @relation("Creator", fields: [creatorId], references: [id])
+  entryLinks ChangelogEntryPR[]
 
-  updatedAt     DateTime     @updatedAt
-  createdAt     DateTime     @default(now())
+  createdAt DateTime @default(now())
+
+  @@unique([projectId, prNumber])
 }
 
-enum Status {
-  BACKLOG
-  TODO
-  IN_PROGRESS
-  DONE
-  CANCELED
+// --- 3. CHANGELOG ---
+
+model ChangelogEntry {
+  id          String    @id @default(cuid())
+  title       String
+  content     String    @db.Text
+  version     String?
+  tags        Tag[]
+  isPublished Boolean   @default(false)
+  publishedAt DateTime?
+  aiDraft     String?   @db.Text
+
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  // Which PRs were used — via explicit join table
+  sourcePRs ChangelogEntryPR[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
-enum Priority {
-  URGENT
-  HIGH
-  MEDIUM
-  LOW
+// Explicit join table: ChangelogEntry <-> GithubPR
+model ChangelogEntryPR {
+  entryId String
+  entry   ChangelogEntry @relation(fields: [entryId], references: [id], onDelete: Cascade)
+
+  prId String
+  pr   GithubPR @relation(fields: [prId], references: [id], onDelete: Cascade)
+
+  @@id([entryId, prId])
+}
+
+enum Tag {
+  FEATURE
+  BUG_FIX
+  IMPROVEMENT
+  SECURITY
+  PERFORMANCE
+  BREAKING_CHANGE
+}
+
+// --- 4. SUBSCRIBERS ---
+
+model Subscriber {
+  id               String    @id @default(cuid())
+  email            String
+  confirmedAt      DateTime?
+  unsubscribeToken String    @unique @default(cuid())
+
+  orgId        String
+  organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([email, orgId])
 }

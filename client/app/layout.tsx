@@ -1,55 +1,43 @@
-"use client";
-
-import {
-  ClerkProvider,
-  UserButton,
-  OrganizationSwitcher,
-  useAuth
-} from '@clerk/nextjs';
+import type { Metadata } from 'next';
+import { ClerkProvider } from '@clerk/nextjs';
+import { Plus_Jakarta_Sans, JetBrains_Mono } from 'next/font/google';
+import { Toaster } from 'sonner';
 import './globals.css';
-import Link from 'next/link';
+import { ThemeProvider } from 'next-themes';
+import { clerkAppearance } from '@/lib/clerk-appearance';
 
-function HeaderContent() {
-  const { userId, isLoaded } = useAuth();
+const sans = Plus_Jakarta_Sans({
+  subsets: ['latin'],
+  variable: '--font-sans',
+  weight: ['400', '500', '600', '700'],
+});
 
-  if (!isLoaded) return <div className="h-10" />;
+const mono = JetBrains_Mono({
+  subsets: ['latin'],
+  variable: '--font-mono',
+  weight: ['400', '500'],
+});
 
-  return (
-    <header className="flex items-center justify-between border-b bg-white px-6 py-3 shadow-sm">
-      <div className="flex items-center gap-4">
-        <h1 className="text-xl font-bold text-indigo-600">Parallel</h1>
-
-        {userId && (
-          <div className="border-l pl-4">
-            <OrganizationSwitcher hidePersonal={false} />
-          </div>
-        )}
-      </div>
-
-      <div>
-        {!userId ? (
-          <Link href='/sign-in'>
-            <button className="rounded-md bg-indigo-600 px-4 py-2 text-sm text-white">
-              Sign In
-            </button>
-          </Link>
-        ) : (
-          <UserButton />
-        )}
-      </div>
-    </header>
-  );
-}
+export const metadata: Metadata = {
+  title: { default: 'Shiplog', template: '%s — Shiplog' },
+  description: 'AI-powered changelog from your GitHub PRs.',
+};
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <ClerkProvider>
-      <html lang="en">
-        <body className="flex h-screen flex-col bg-slate-50">
-          <HeaderContent />
-          <main className="flex-1 overflow-y-auto">{children}</main>
+    <ClerkProvider afterSignOutUrl="/sign-in" appearance={clerkAppearance}>
+      <html lang="en" suppressHydrationWarning>
+        <body>
+          <ThemeProvider
+            attribute="class" 
+            defaultTheme="dark"
+            enableSystem
+          >
+            {children}
+            <Toaster theme="system" />
+          </ThemeProvider>
         </body>
       </html>
-    </ClerkProvider>
+    </ClerkProvider >
   );
 }

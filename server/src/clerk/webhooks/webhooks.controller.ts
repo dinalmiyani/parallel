@@ -62,25 +62,14 @@ export class WebhooksController {
             image: data.image_url,
           },
         });
-
-        if (type === 'user.created') {
-          try {
-            await this.clerkClient.organizations.createOrganization({
-              name: `${data.first_name || 'My'}'s Workspace`,
-              createdBy: data.id,
-            });
-          } catch (e) {
-            console.error('Auto-org creation failed', e);
-          }
-        }
         break;
 
       case 'organization.created':
       case 'organization.updated':
         await this.prisma.organization.upsert({
           where: { id: data.id },
-          update: { name: data.name, slug: data.slug },
-          create: { id: data.id, name: data.name, slug: data.slug },
+          update: { name: data.name, slug: data.slug, logo: data.logo_url },
+          create: { id: data.id, name: data.name, slug: data.slug, logo: data.logo_url },
         });
         break;
 
@@ -123,7 +112,7 @@ export class WebhooksController {
         try {
           await this.prisma.user.update({
             where: { id: data.id },
-            data: { name: 'Deleted User', email: `deleted-${data.id}` },
+            data: { name: 'Deleted User', email: `deleted-${data.id}@deleted.invalid` },
           });
         } catch (e) {
           console.log(e, 'error')
