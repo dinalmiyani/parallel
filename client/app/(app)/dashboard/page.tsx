@@ -5,41 +5,42 @@ import {
   ScrollText, GitPullRequest, Users, TrendingUp,
   ExternalLink, Clock, Zap, ChevronRight, GitBranch,
 } from 'lucide-react';
+import Link from 'next/link';
 
 const STATS = [
-  { label: 'Total Entries',  value: '24', delta: '+3 this month', icon: ScrollText,     color: 'blue'    },
-  { label: 'Published',      value: '18', delta: '6 drafts',      icon: TrendingUp,     color: 'emerald' },
-  { label: 'PRs Available',  value: '12', delta: 'ready to use',  icon: GitPullRequest, color: 'amber'   },
-  { label: 'Subscribers',    value: '47', delta: '+8 this week',  icon: Users,          color: 'violet'  },
+  { label: 'Total Entries', value: '24', delta: '+3 this month', icon: ScrollText, color: 'blue' },
+  { label: 'Published', value: '18', delta: '6 drafts', icon: TrendingUp, color: 'emerald' },
+  { label: 'PRs Available', value: '12', delta: 'ready to use', icon: GitPullRequest, color: 'amber' },
+  { label: 'Subscribers', value: '47', delta: '+8 this week', icon: Users, color: 'violet' },
 ];
 
 const RECENT_ENTRIES = [
-  { id: '1', title: 'Redesigned dashboard with real-time metrics',   version: 'v2.4.0', status: 'published', date: '2 days ago',  tags: ['Feature', 'Performance'] },
-  { id: '2', title: 'Fixed GitHub sync edge case on private repos',  version: 'v2.3.1', status: 'published', date: '5 days ago',  tags: ['Bug Fix'] },
-  { id: '3', title: 'AI generation improvements and cost reduction', version: 'v2.3.0', status: 'published', date: '1 week ago',  tags: ['Improvement'] },
-  { id: '4', title: 'New subscriber email template',                 version: null,      status: 'draft',     date: '2 hours ago', tags: ['Feature'] },
-  { id: '5', title: 'Breaking: API response shape updated',          version: 'v3.0.0', status: 'draft',     date: '1 hour ago',  tags: ['Breaking Change'] },
+  { id: '1', title: 'Redesigned dashboard with real-time metrics', version: 'v2.4.0', status: 'published', date: '2 days ago', tags: ['Feature', 'Performance'] },
+  { id: '2', title: 'Fixed GitHub sync edge case on private repos', version: 'v2.3.1', status: 'published', date: '5 days ago', tags: ['Bug Fix'] },
+  { id: '3', title: 'AI generation improvements and cost reduction', version: 'v2.3.0', status: 'published', date: '1 week ago', tags: ['Improvement'] },
+  { id: '4', title: 'New subscriber email template', version: null, status: 'draft', date: '2 hours ago', tags: ['Feature'] },
+  { id: '5', title: 'Breaking: API response shape updated', version: 'v3.0.0', status: 'draft', date: '1 hour ago', tags: ['Breaking Change'] },
 ];
 
 const RECENT_PRS = [
-  { number: 247, title: 'feat: add webhook retry logic',      merged: '3h ago' },
-  { number: 246, title: 'fix: subscriber duplicate emails',   merged: '1d ago' },
-  { number: 245, title: 'chore: upgrade prisma to v5.10',     merged: '2d ago' },
+  { number: 247, title: 'feat: add webhook retry logic', merged: '3h ago' },
+  { number: 246, title: 'fix: subscriber duplicate emails', merged: '1d ago' },
+  { number: 245, title: 'chore: upgrade prisma to v5.10', merged: '2d ago' },
 ];
 
 const STAT_COLORS: Record<string, { bg: string; icon: string; ring: string }> = {
-  blue:    { bg: 'bg-blue-500/10',   icon: 'text-blue-400',   ring: 'ring-1 ring-blue-500/20'   },
-  emerald: { bg: 'bg-emerald-500/10',icon: 'text-emerald-400',ring: 'ring-1 ring-emerald-500/20' },
-  amber:   { bg: 'bg-amber-500/10',  icon: 'text-amber-400',  ring: 'ring-1 ring-amber-500/20'  },
-  violet:  { bg: 'bg-violet-500/10', icon: 'text-violet-400', ring: 'ring-1 ring-violet-500/20' },
+  blue: { bg: 'bg-blue-500/10', icon: 'text-blue-400', ring: 'ring-1 ring-blue-500/20' },
+  emerald: { bg: 'bg-emerald-500/10', icon: 'text-emerald-400', ring: 'ring-1 ring-emerald-500/20' },
+  amber: { bg: 'bg-amber-500/10', icon: 'text-amber-400', ring: 'ring-1 ring-amber-500/20' },
+  violet: { bg: 'bg-violet-500/10', icon: 'text-violet-400', ring: 'ring-1 ring-violet-500/20' },
 };
 
 const TAG_COLORS: Record<string, string> = {
-  'Feature':        'bg-blue-500/10 text-blue-400 border-blue-500/20',
-  'Bug Fix':        'bg-red-500/10 text-red-400 border-red-500/20',
-  'Improvement':    'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
-  'Performance':    'bg-cyan-500/10 text-cyan-400 border-cyan-500/20',
-  'Breaking Change':'bg-orange-500/10 text-orange-400 border-orange-500/20',
+  'Feature': 'bg-blue-500/10 text-blue-400 border-blue-500/20',
+  'Bug Fix': 'bg-red-500/10 text-red-400 border-red-500/20',
+  'Improvement': 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+  'Performance': 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20',
+  'Breaking Change': 'bg-orange-500/10 text-orange-400 border-orange-500/20',
 };
 
 export default async function DashboardPage() {
@@ -98,9 +99,9 @@ export default async function DashboardPage() {
           <div className="xl:col-span-2 bg-(--bg-raised) border border-(--border) rounded-xl overflow-hidden">
             <div className="flex items-center justify-between px-4 py-3 border-b border-(--border)">
               <h2 className="text-sm font-semibold text-(--text-primary)">Recent Entries</h2>
-              <a href="/changelog" className="text-xs text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-0.5">
+              <Link href="/changelog" className="text-xs text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-0.5">
                 View all <ChevronRight size={11} />
-              </a>
+              </Link>
             </div>
 
             <div className="divide-y divide-(--border)">
@@ -110,9 +111,8 @@ export default async function DashboardPage() {
                   className="flex items-start gap-3 px-4 py-3 hover:bg-(--bg-overlay) transition-colors cursor-pointer"
                 >
                   <div className="mt-1.5 flex-shrink-0">
-                    <div className={`w-1.5 h-1.5 rounded-full ${
-                      entry.status === 'published' ? 'bg-emerald-400' : 'bg-(--text-muted)'
-                    }`} />
+                    <div className={`w-1.5 h-1.5 rounded-full ${entry.status === 'published' ? 'bg-emerald-400' : 'bg-(--text-muted)'
+                      }`} />
                   </div>
 
                   <div className="flex-1 min-w-0">
@@ -122,11 +122,10 @@ export default async function DashboardPage() {
                           {entry.version}
                         </span>
                       )}
-                      <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded-full border ${
-                        entry.status === 'published'
+                      <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded-full border ${entry.status === 'published'
                           ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20'
                           : 'text-(--text-muted) bg-(--bg-overlay) border-(--border)'
-                      }`}>
+                        }`}>
                         {entry.status}
                       </span>
                     </div>
