@@ -18,7 +18,7 @@ export default async function OnboardingPage() {
           <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
             <Zap size={16} className="text-(--text-primary) fill-white" />
           </div>
-          <span className="text-(--text-primary) font-semibold text-lg tracking-tight">Shiplog</span>
+          <span className="text-(--text-primary) font-semibold text-lg tracking-tight">Parallel</span>
         </Link>
       </header>
 
@@ -66,7 +66,7 @@ export default async function OnboardingPage() {
 
         <p className="mt-6 text-(--text-muted) text-xs text-center max-w-xs">
           The workspace name becomes your public changelog URL.{' '}
-          <span className="text-(--text-muted)">e.g. acme-corp.shiplog.is-a.dev</span>
+          <span className="text-(--text-muted)">e.g. acme-corp.parallel.is-a.dev</span>
         </p>
       </main>
     </div>

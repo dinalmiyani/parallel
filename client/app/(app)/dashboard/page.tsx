@@ -63,7 +63,7 @@ export default async function DashboardPage() {
             </p>
           </div>
           <a
-            href="#"
+            href="/acme-corp/changelog"
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-1.5 px-3 py-1.5 bg-(--bg-overlay) border border-(--border) hover:border-(--text-muted) text-(--text-secondary) hover:text-(--text-primary) text-xs font-medium rounded-lg transition-all"
@@ -123,8 +123,8 @@ export default async function DashboardPage() {
                         </span>
                       )}
                       <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded-full border ${entry.status === 'published'
-                          ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20'
-                          : 'text-(--text-muted) bg-(--bg-overlay) border-(--border)'
+                        ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20'
+                        : 'text-(--text-muted) bg-(--bg-overlay) border-(--border)'
                         }`}>
                         {entry.status}
                       </span>
@@ -173,13 +173,13 @@ export default async function DashboardPage() {
                 New blank entry
               </a>
 
-              <a
+              <Link
                 href="/projects"
                 className="w-full flex items-center gap-2.5 px-3 py-2.5 bg-(--bg-overlay) border border-(--border) hover:border-(--text-muted) text-(--text-secondary) hover:text-(--text-primary) text-sm rounded-lg transition-colors"
               >
                 <GitBranch size={13} className="text-(--text-muted)" />
                 Connect a repo
-              </a>
+              </Link>
             </div>
 
             <div className="bg-(--bg-raised) border border-(--border) rounded-xl overflow-hidden">

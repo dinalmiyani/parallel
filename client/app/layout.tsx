@@ -19,7 +19,7 @@ const mono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: { default: 'Shiplog', template: '%s — Shiplog' },
+  title: { default: 'Parallel', template: '%s — Parallel' },
   description: 'AI-powered changelog from your GitHub PRs.',
 };
 
@@ -27,7 +27,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <ClerkProvider afterSignOutUrl="/sign-in" appearance={clerkAppearance}>
       <html lang="en" suppressHydrationWarning>
-        <body>
+        <body suppressHydrationWarning>
           <ThemeProvider
             attribute="class" 
             defaultTheme="dark"

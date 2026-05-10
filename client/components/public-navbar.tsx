@@ -18,8 +18,10 @@ export default function PublicNavbar() {
   const { isSignedIn } = useAuth();
 
   return (
-    <header className="fixed top-0 inset-x-0 z-50 h-14 border-b border-(--border) bg-(--bg-base)/80 backdrop-blur-md">
-      <div className="max-w-6xl mx-auto h-full px-6 flex items-center justify-between">
+    <header
+      className="fixed top-0 inset-x-0 z-50 h-14 border-b border-(--border) backdrop-blur-md"
+      style={{ backgroundColor: 'color-mix(in srgb, var(--bg-base) 80%, transparent)' }}
+    >      <div className="max-w-6xl mx-auto h-full px-6 flex items-center justify-between">
 
         <Link href="/" className="flex items-center gap-2 flex-shrink-0">
           <div className="w-7 h-7 bg-blue-600 rounded-md flex items-center justify-center">
