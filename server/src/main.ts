@@ -1,14 +1,31 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import * as dotenv from 'dotenv';
-dotenv.config();
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
-    rawBody: true, 
+    rawBody: true,
   });
-  const port = process.env.PORT ?? 3000;
-  await app.listen(port);
-  console.log(`app is running on port ${port}`)
+
+  app.setGlobalPrefix('api', {
+    exclude: ['webhooks/clerk', 'webhooks/stripe'],
+  });
+
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,       // Strip unknown fields
+      forbidNonWhitelisted: true, // Throw if unknown fields sent
+      transform: true,       // Auto-transform types (string → number etc)
+    }),
+  );
+
+  app.enableCors({
+    origin: process.env.FRONTEND_URL ?? 'http://localhost:3000',
+    credentials: true,
+  });
+
+  await app.listen(process.env.PORT ?? 3001);
+  console.log(`Server running on http://localhost:${process.env.PORT ?? 3001}/api`);
 }
+
 bootstrap();

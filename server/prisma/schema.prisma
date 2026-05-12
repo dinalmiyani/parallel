@@ -18,7 +18,7 @@ model User {
 }
 
 model Organization {
-  id         String   @id // Clerk Org ID (org_...)
+  id         String   @id
   name       String
   slug       String   @unique
   domain     String?  @unique
@@ -26,10 +26,22 @@ model Organization {
   logo       String?
   brandColor String   @default("#2563EB")
 
+  plan              Plan      @default(FREE)
+  stripeCustomerId  String?   @unique
+  stripeSubId       String?   @unique  // Stripe subscription ID
+  stripePriceId     String?            // which price they're on
+  planExpiresAt     DateTime?          // when current period ends
+
   members     Member[]
   projects    Project[]
   subscribers Subscriber[]
   createdAt   DateTime     @default(now())
+}
+
+enum Plan {
+  FREE
+  PRO
+  TEAM
 }
 
 model Member {
