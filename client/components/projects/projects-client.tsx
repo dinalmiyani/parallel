@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Topbar from '@/components/topbar';
 import { Plus } from 'lucide-react';
@@ -16,11 +16,25 @@ export default function ProjectsClient({
   initialProjects: Project[];
 }) {
   const router = useRouter();
+  const menuRef = useRef<HTMLDivElement>(null);
 
   const [projects, setProjects] = useState<Project[]>(initialProjects);
   const [showConnect, setShowConnect] = useState(false);
   const [disconnecting, setDisconnecting] = useState<Project | null>(null);
   const [openMenu, setOpenMenu] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!openMenu) return;
+
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setOpenMenu(null);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, [openMenu]);
 
   const handleConnected = (project: Project) => {
     setProjects((prev) => [project, ...prev]);
@@ -55,7 +69,7 @@ export default function ProjectsClient({
           </button>
         </div>
 
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4" ref={menuRef}>
 
           {projects.map((project) => (
             <ProjectCard
@@ -105,16 +119,6 @@ export default function ProjectsClient({
           project={disconnecting}
           onClose={() => setDisconnecting(null)}
           onDisconnected={handleDisconnected}
-        />
-      )}
-
-      {openMenu && (
-        <div
-          className="fixed inset-0 z-[5]"
-          onMouseDown={(e) => {
-            e.preventDefault();
-            setOpenMenu(null);
-          }}
         />
       )}
     </div>

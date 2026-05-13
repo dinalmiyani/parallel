@@ -46,7 +46,7 @@ export default function ProjectCard({
         </div>
 
         <div
-          className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity"
+          className="flex items-center gap-1"
           onClick={(e) => e.stopPropagation()}
         >
 
@@ -64,7 +64,6 @@ export default function ProjectCard({
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                e.stopPropagation();
                 setOpenMenu(
                   openMenu === project.id
                     ? null
@@ -80,14 +79,18 @@ export default function ProjectCard({
               <div className="absolute right-0 top-8 bg-(--bg-raised) border border-(--border) rounded-lg shadow-xl z-10 w-40 overflow-hidden">
 
                 <button
-                  onClick={onOpen}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onOpen();
+                  }}
                   className="w-full text-left px-3 py-2 text-xs text-(--text-secondary) hover:bg-(--bg-overlay) hover:text-(--text-primary) transition-colors"
                 >
                   View details
                 </button>
 
                 <button
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.stopPropagation();
                     setOpenMenu(null);
                     onDisconnect(project);
                   }}
