@@ -15,7 +15,12 @@ import { ImportPRsDto, GitHubRepo, StoredPR, ImportResult } from './dto/github.d
 @Controller('github')
 @UseGuards(ClerkAuthGuard)
 export class GithubController {
-  constructor(private readonly githubService: GithubService) {}
+  constructor(private readonly githubService: GithubService) { }
+
+  @Get('status')
+  async getStatus(@UserId() userId: string): Promise<{ connected: boolean }> {
+    return this.githubService.getConnectionStatus(userId);
+  }
 
   @Get('repos')
   listRepos(@UserId() userId: string): Promise<GitHubRepo[]> {

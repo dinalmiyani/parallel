@@ -17,6 +17,15 @@ import {
 export class GithubService {
   constructor(private prisma: PrismaService) { }
 
+  async getConnectionStatus(userId: string): Promise<{ connected: boolean }> {
+    try {
+      await this.getGitHubToken(userId);
+      return { connected: true };
+    } catch {
+      return { connected: false };
+    }
+  }
+
   private async getGitHubToken(userId: string): Promise<string> {
     const response = await fetch(
       `https://api.clerk.com/v1/users/${userId}/oauth_access_tokens/oauth_github`,
