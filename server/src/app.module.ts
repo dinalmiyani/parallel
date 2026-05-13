@@ -5,19 +5,21 @@ import { AppService } from './app.service';
 import { PrismaModule } from './prisma/prisma.module';
 import { CommonModule } from './common/common.module';
 import { ProjectsModule } from './projects/projects.module';
+import { ChangelogModule } from './changelog/changelog.module';
+import { GithubModule } from './github/github.module';
+import { AiModule } from './ai/ai.module';
 import { WebhooksController } from './clerk/webhooks/webhooks.controller';
 
 @Module({
   imports: [
-    // Load .env globally — isGlobal means no need to import in each module
     ConfigModule.forRoot({ isGlobal: true }),
     PrismaModule,
     CommonModule,
     ProjectsModule,
-    // ChangelogModule 
-    // GithubModule
-    // AiModule  
-    // SubscribersModule 
+    ChangelogModule,
+    GithubModule,
+    AiModule,
+    // SubscribersModule
   ],
   controllers: [
     AppController,
