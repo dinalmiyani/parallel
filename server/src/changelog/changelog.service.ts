@@ -6,12 +6,14 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { SubscriptionService } from 'src/common/subscription.service';
 import { CreateEntryDto, UpdateEntryDto, PublishEntryDto, Tag } from './dto/changelog.dto';
 import { EntryListItem, EntryDetail, PublicEntryItem } from './changelog.types';
+import { SubscribersService } from 'src/subscribers/subscribers.service';
 
 @Injectable()
 export class ChangelogService {
   constructor(
     private prisma: PrismaService,
     private subscription: SubscriptionService,
+    private subscribersService: SubscribersService,
   ) { }
 
   private readonly listSelect = {
@@ -309,6 +311,17 @@ export class ChangelogService {
         publishedAt: dto.isPublished ? new Date() : null,
       },
     });
+
+    if (dto.isPublished && dto.notifySubscribers !== false) {
+      this.subscribersService
+        .notifySubscribers(orgId, id)
+        .then(({ sent }) => {
+          console.log(`[ChangelogService] Notified ${sent} subscribers for entry ${id}`);
+        })
+        .catch((err) => {
+          console.error('[ChangelogService] Subscriber notification failed:', err);
+        });
+    }
 
     return this.findOne(id, orgId);
   }
