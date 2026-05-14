@@ -9,6 +9,7 @@ import { ChangelogModule } from './changelog/changelog.module';
 import { GithubModule } from './github/github.module';
 import { AiModule } from './ai/ai.module';
 import { WebhooksController } from './clerk/webhooks/webhooks.controller';
+import { SubscribersModule } from './subscribers/subscribers.module';
 
 @Module({
   imports: [
@@ -19,7 +20,7 @@ import { WebhooksController } from './clerk/webhooks/webhooks.controller';
     ChangelogModule,
     GithubModule,
     AiModule,
-    // SubscribersModule
+    SubscribersModule
   ],
   controllers: [
     AppController,
@@ -27,4 +28,4 @@ import { WebhooksController } from './clerk/webhooks/webhooks.controller';
   ],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }
