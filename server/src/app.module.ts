@@ -10,6 +10,7 @@ import { GithubModule } from './github/github.module';
 import { AiModule } from './ai/ai.module';
 import { WebhooksController } from './clerk/webhooks/webhooks.controller';
 import { SubscribersModule } from './subscribers/subscribers.module';
+import { SubscriptionModule } from './subscription/subscription.module';
 
 @Module({
   imports: [
@@ -20,7 +21,8 @@ import { SubscribersModule } from './subscribers/subscribers.module';
     ChangelogModule,
     GithubModule,
     AiModule,
-    SubscribersModule
+    SubscribersModule,
+    SubscriptionModule
   ],
   controllers: [
     AppController,
