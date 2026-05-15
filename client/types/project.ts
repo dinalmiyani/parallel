@@ -13,9 +13,9 @@ export interface ProjectDetail {
   name: string;
   repoName: string;
   repoOwner: string;
-  githubRepoId: number;
-  defaultBranch: string;
-  createdAt: string;
+  githubRepoId?: number;
+  defaultBranch?: string;
+  createdAt?: string;
   entriesCount: number;
   unusedPRsCount: number;
   lastPublishedAt: string | null;
@@ -27,10 +27,10 @@ export interface EntryListItem {
   version: string | null;
   tags: string[];
   isPublished: boolean;
-  publishedAt: string | null;
+  publishedAt?: string | null;
   createdAt: string;
-  updatedAt: string;
-  projectId: string;
+  updatedAt?: string;
+  projectId?: string;
   projectName: string;
   linkedPRsCount: number;
 }
