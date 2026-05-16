@@ -11,6 +11,7 @@ import { AiModule } from './ai/ai.module';
 import { WebhooksController } from './clerk/webhooks/webhooks.controller';
 import { SubscribersModule } from './subscribers/subscribers.module';
 import { SubscriptionModule } from './subscription/subscription.module';
+import { AnalyticsModule } from './analytics/analyics.module';
 
 @Module({
   imports: [
@@ -22,7 +23,8 @@ import { SubscriptionModule } from './subscription/subscription.module';
     GithubModule,
     AiModule,
     SubscribersModule,
-    SubscriptionModule
+    SubscriptionModule,
+    AnalyticsModule,
   ],
   controllers: [
     AppController,
