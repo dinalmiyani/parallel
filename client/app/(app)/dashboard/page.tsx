@@ -58,12 +58,15 @@ export default async function DashboardPage() {
   const { userId, orgId } = await auth();
   if (!userId || !orgId) redirect('/sign-in');
 
-  const [entries, projects, usage, githubStatus] = await Promise.all([
+  const [entries, projects, usage, githubStatus, settings] = await Promise.all([
     apiServer().get<EntryListItem[]>('/changelog').catch(() => [] as EntryListItem[]),
     apiServer().get<ProjectDetail[]>('/projects').catch(() => [] as ProjectDetail[]),
     apiServer().get<UsageData>('/subscription/usage').catch(() => null),
     apiServer().get<GitHubStatus>('/github/status').catch(() => ({ connected: false })),
+    apiServer().get<{ slug: string }>('/settings').catch(() => null),
   ]);
+
+  const publicUrl = `/${settings?.slug}/changelog`;
 
   const publishedCount = entries.filter(e => e.isPublished).length;
   const draftCount = entries.filter(e => !e.isPublished).length;
@@ -142,7 +145,7 @@ export default async function DashboardPage() {
           </div>
           {projects.length > 0 && (
             <a
-              href={`/${projects[0]?.repoOwner?.toLowerCase()}-${projects[0]?.repoName?.toLowerCase()}/changelog`}
+              href={publicUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-1.5 px-3 py-1.5 bg-(--bg-overlay) border border-(--border) hover:border-(--text-muted) text-(--text-secondary) hover:text-(--text-primary) text-xs font-medium rounded-lg transition-all"

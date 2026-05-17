@@ -12,6 +12,7 @@ import { WebhooksController } from './clerk/webhooks/webhooks.controller';
 import { SubscribersModule } from './subscribers/subscribers.module';
 import { SubscriptionModule } from './subscription/subscription.module';
 import { AnalyticsModule } from './analytics/analyics.module';
+import { SettingsModule } from './settings/settings.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { AnalyticsModule } from './analytics/analyics.module';
     SubscribersModule,
     SubscriptionModule,
     AnalyticsModule,
+    SettingsModule
   ],
   controllers: [
     AppController,
