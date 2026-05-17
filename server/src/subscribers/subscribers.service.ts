@@ -371,7 +371,7 @@ export class SubscribersService {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: process.env.RESEND_FROM_EMAIL ?? 'Parallel <noreply@parallel.dev>',
+        from: process.env.RESEND_FROM_EMAIL ?? 'Parallel <dinalmiyani@gmail.com>',
         to: params.to,
         subject: params.subject,
         html: params.html,
